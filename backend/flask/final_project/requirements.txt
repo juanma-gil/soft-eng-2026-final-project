@@ -1,1 +1,15 @@
+# Flask Framework
 flask
+
+# Database ORM and PostgreSQL driver
+# flask-sqlalchemy
+# psycopg2-binary
+
+# Database migrations
+# flask-migrate
+
+# Environment variables
+# python-dotenv
+
+# CORS support
+# flask-cors

@@ -1,0 +1,77 @@
+# Docker Compose configuration for the Software Engineering Final Project
+# This file defines all the services needed to run the application
+
+version: '3.8'
+
+services:
+  # PostgreSQL Database Service
+  # Official PostgreSQL image from Docker Hub
+  postgres:
+    image: postgres:16-alpine
+    container_name: soft-eng-postgres
+    restart: unless-stopped
+    
+    # Environment variables for PostgreSQL initial configuration
+    environment:
+      # Database name that will be created automatically
+      POSTGRES_DB: soft_eng_db
+      
+      # Default username for the database
+      POSTGRES_USER: soft_eng_user
+      
+      # Password for the database user
+      # WARNING: In production, use secrets or environment files
+      POSTGRES_PASSWORD: dev_password_2026
+      
+      # PostgreSQL configuration for better performance in development
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    
+    # Port mapping: host_port:container_port
+    # PostgreSQL will be accessible on localhost:5432
+    ports:
+      - "5432:5432"
+    
+    # Volume for data persistence
+    # Database data will survive container restarts
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # Optional: Add initialization scripts here
+      # - ./init-scripts:/docker-entrypoint-initdb.d
+    
+    # Health check to ensure database is ready
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U soft_eng_user -d soft_eng_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    
+    # Network configuration
+    networks:
+      - soft-eng-network
+
+  # Optional: pgAdmin for database management (GUI tool)
+  # Uncomment the lines below to enable pgAdmin
+  # pgadmin:
+  #   image: dpage/pgadmin4:latest
+  #   container_name: soft-eng-pgadmin
+  #   restart: unless-stopped
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: admin@softeng.com
+  #     PGADMIN_DEFAULT_PASSWORD: admin
+  #   ports:
+  #     - "5050:80"
+  #   networks:
+  #     - soft-eng-network
+  #   depends_on:
+  #     - postgres
+
+# Named volumes for data persistence
+volumes:
+  postgres_data:
+    driver: local
+
+# Network configuration
+# All services will communicate through this network
+networks:
+  soft-eng-network:
+    driver: bridge
