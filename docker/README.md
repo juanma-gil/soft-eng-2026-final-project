@@ -23,15 +23,32 @@ You should see version numbers if everything is installed correctly.
 
 ## Quick Start
 
-### 1. Navigate to the Docker Directory
+### 1. Configure Environment Variables (First Time Only)
 
-Open your terminal and navigate to the project's docker folder:
+The project uses a centralized `.env` file at the root directory. Configure it before starting any services:
 
 ```bash
-cd /path/to/soft-eng-2026-final-project/docker
+# From the project root
+cd /path/to/soft-eng-2026-final-project
+cp .env.example .env
 ```
 
-### 2. Start the PostgreSQL Database
+The `.env` file contains configuration for:
+- PostgreSQL database (credentials, ports, database name)
+- All backend services (Flask, Spring Boot, NestJS)
+- Frontend configuration
+
+**Note:** The `.env` file is already configured with development defaults. For production, update these values with secure credentials.
+
+### 2. Navigate to the Docker Directory
+
+```bash
+cd docker
+```
+
+### 3. Start the PostgreSQL Database
+
+### 3. Start the PostgreSQL Database
 
 Run the following command to start the database:
 
@@ -44,8 +61,9 @@ docker-compose up -d
 - Downloads the PostgreSQL image if not already present
 - Creates and starts the database container
 - Sets up persistent storage for your data
+- Loads environment variables from the root `.env` file
 
-### 3. Verify the Database is Running
+### 4. Verify the Database is Running
 
 Check that the container is running:
 
@@ -55,7 +73,7 @@ docker-compose ps
 
 You should see the `soft-eng-postgres` container with status "Up".
 
-### 4. Check Database Health
+### 5. Check Database Health
 
 Wait a few seconds and verify the database is healthy:
 
@@ -67,7 +85,7 @@ Look for a message like: `database system is ready to accept connections`
 
 ## Database Connection Details
 
-Use these credentials to connect from your backend applications:
+The credentials are defined in the root `.env` file. With the default configuration:
 
 ```
 Host: localhost
@@ -76,6 +94,8 @@ Database: soft_eng_db
 Username: soft_eng_user
 Password: dev_password_2026
 ```
+
+**Note:** These values can be changed by editing the `.env` file at the project root before starting the containers.
 
 ### Connection String Examples
 
