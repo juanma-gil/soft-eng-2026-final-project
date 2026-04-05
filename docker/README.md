@@ -312,7 +312,7 @@ You can build and run the IoT dashboard as a production container using `docker/
 
 ### Important: `NEXT_PUBLIC_API_URL`
 
-The frontend reads the backend base URL from `NEXT_PUBLIC_API_URL`. Next.js **inlines** this value at **build** time, so you must pass it as a **build argument** when building the image—changing it at `docker run` alone will not update what the browser uses.
+The dashboard uses the same variable as local dev: set it in the **monorepo root** `.env` (see root `.env.example`). For the Docker image, Next.js **inlines** `NEXT_PUBLIC_*` at **build** time, so pass the same value as a **build argument** when building—`docker run` alone cannot change what the browser bundle contains.
 
 Use a URL that the **user’s browser** can reach (for example `http://localhost:3000` if the API is published on the host). It is usually **not** the internal Docker service name unless you also expose the API under that name on the host.
 
@@ -327,7 +327,7 @@ docker build -f docker/nextjs.Dockerfile \
   .
 ```
 
-Adjust `NEXT_PUBLIC_API_URL` to match where your backend listens (NestJS often uses port `3000`; choose another port if something else already uses it).
+Keep `NEXT_PUBLIC_API_URL` aligned with the root `.env` and the backend you run (NestJS often `3000`, Spring `8080`, Flask `5000`).
 
 ### Run the container
 

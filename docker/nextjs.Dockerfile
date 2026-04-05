@@ -5,9 +5,10 @@
 #
 #   docker build -f docker/nextjs.Dockerfile -t soft-eng-dashboard .
 #
-# `NEXT_PUBLIC_*` variables are inlined at build time. Pass the API URL your
-# browser will use to reach the backend (not a Docker-only hostname unless you
-# expose the API under that name on the host network).
+# `NEXT_PUBLIC_*` variables are inlined at build time. Match the monorepo root
+# `.env` value for `NEXT_PUBLIC_API_URL` (see root `.env.example`). Pass the
+# URL your browser will use to reach the backend (not a Docker-only hostname
+# unless you expose the API under that name on the host network).
 
 ARG NODE_VERSION=22
 
