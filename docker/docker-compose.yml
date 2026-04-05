@@ -14,7 +14,6 @@ services:
     # Environment variables loaded from root .env file
     env_file:
       - ../.env
-    
     # Port mapping: host_port:container_port
     # PostgreSQL will be accessible on localhost:5432
     ports:
