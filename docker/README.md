@@ -87,11 +87,13 @@ The credentials are defined in the root `.env` file. With the default configurat
 
 ```
 Host: localhost
-Port: 5432
+Port: 5433
 Database: soft_eng_db
 Username: soft_eng_user
 Password: dev_password_2026
 ```
+
+The container still listens on **5432 inside Docker**; **5433** is the port on your machine (`5433:5432` mapping). Keep **`POSTGRES_PORT`** in the root `.env` aligned with the left-hand side of `ports:` in `docker-compose.yml`.
 
 **Note:** These values can be changed by editing the `.env` file at the project root before starting the containers.
 
@@ -99,12 +101,12 @@ Password: dev_password_2026
 
 **PostgreSQL URL format:**
 ```
-postgresql://soft_eng_user:dev_password_2026@localhost:5432/soft_eng_db
+postgresql://soft_eng_user:dev_password_2026@localhost:5433/soft_eng_db
 ```
 
 **JDBC URL (for Spring Boot):**
 ```
-jdbc:postgresql://localhost:5432/soft_eng_db
+jdbc:postgresql://localhost:5433/soft_eng_db
 ```
 
 ## Common Commands
@@ -192,26 +194,18 @@ docker-compose up -d
 
 ## Troubleshooting
 
-### Port 5432 Already in Use
+### Database port already in use on the host
 
-If you have another PostgreSQL instance running:
+The compose file publishes Postgres on **host port 5433** by default so it does not fight with a typical local install on **5432**.
 
-**Option 1:** Stop your local PostgreSQL
-```bash
-# macOS
-brew services stop postgresql
+If **5433** is also taken, pick another free host port in `docker-compose.yml`:
 
-# Linux
-sudo systemctl stop postgresql
-```
-
-**Option 2:** Change the port in `docker-compose.yml`
 ```yaml
 ports:
-  - "5433:5432"  # Use port 5433 instead
+  - "5434:5432"
 ```
 
-Then connect using port 5433.
+Then set **`POSTGRES_PORT=5434`** (and matching URLs) in the root `.env`.
 
 ### Container Won't Start
 
@@ -277,16 +271,25 @@ After starting the database, update your backend configuration files:
 ```yaml
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/soft_eng_db
+    url: jdbc:postgresql://localhost:5433/soft_eng_db
     username: soft_eng_user
     password: dev_password_2026
 ```
 
-### Flask (`config.py` or environment variables)
+### Flask (root `.env`)
 
-```python
-DATABASE_URL = "postgresql://soft_eng_user:dev_password_2026@localhost:5432/soft_eng_db"
+The Flask app loads the **monorepo root** `.env` and builds `SQLALCHEMY_DATABASE_URI` from `POSTGRES_*` (or uses `DATABASE_URL` if set to a real URL). Defaults match Docker PostgreSQL:
+
+```env
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5433
+POSTGRES_DB=soft_eng_db
+POSTGRES_USER=soft_eng_user
+POSTGRES_PASSWORD=dev_password_2026
+FLASK_APP=main:app
 ```
+
+Run from `backend/flask/final_project` (see `backend/flask/final_project/readme.md`).
 
 ### NestJS (`app.module.ts` or `.env`)
 
@@ -294,7 +297,7 @@ DATABASE_URL = "postgresql://soft_eng_user:dev_password_2026@localhost:5432/soft
 TypeOrmModule.forRoot({
   type: 'postgres',
   host: 'localhost',
-  port: 5432,
+  port: 5433,
   username: 'soft_eng_user',
   password: 'dev_password_2026',
   database: 'soft_eng_db',
@@ -308,7 +311,7 @@ You can build and run the IoT dashboard as a production container using `docker/
 ### Prerequisites
 
 - Same Docker installation as above.
-- The dashboard source lives in `frontend/dashboard` (see the project OpenSpec / course docs).
+- The dashboard source lives in `frontend/dashboard` (see the root [README](../README.md)).
 
 ### Important: `NEXT_PUBLIC_API_URL`
 

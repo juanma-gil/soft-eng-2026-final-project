@@ -113,8 +113,12 @@ Choose your preferred backend framework:
 ```bash
 cd backend/flask/final_project
 pip install -r requirements.txt
-python src/main.py
+export FLASK_APP=main:app
+flask db upgrade   # first time, with PostgreSQL up and root .env configured
+python main.py
 ```
+
+Uses the **repository root** `.env` (see `backend/flask/final_project/readme.md`).
 
 **Spring Boot:**
 ```bash

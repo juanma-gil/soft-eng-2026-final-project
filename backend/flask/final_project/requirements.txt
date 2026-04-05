@@ -1,15 +1,9 @@
-# Flask Framework
-flask
-
-# Database ORM and PostgreSQL driver
-# flask-sqlalchemy
-# psycopg2-binary
-
-# Database migrations
-# flask-migrate
-
-# Environment variables
-# python-dotenv
-
-# CORS support
-# flask-cors
+flask>=3.0.0
+flask-sqlalchemy>=3.1.0
+flask-migrate>=4.0.0
+flask-cors>=4.0.0
+sqlalchemy>=2.0.0
+psycopg2-binary>=2.9.0
+marshmallow>=3.20.0
+python-dotenv>=1.0.0
+flasgger>=0.9.7

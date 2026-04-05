@@ -1,8 +1,6 @@
 # Docker Compose configuration for the Software Engineering Final Project
 # This file defines all the services needed to run the application
 
-version: '3.8'
-
 services:
   # PostgreSQL Database Service
   # Official PostgreSQL image from Docker Hub
@@ -14,10 +12,10 @@ services:
     # Environment variables loaded from root .env file
     env_file:
       - ../.env
-    # Port mapping: host_port:container_port
-    # PostgreSQL will be accessible on localhost:5432
+    # Host port 5433 avoids clashing with a local PostgreSQL on 5432.
+    # Keep POSTGRES_PORT in the repo root .env in sync (see .env.example).
     ports:
-      - "5432:5432"
+      - "5433:5432"
     
     # Volume for data persistence
     # Database data will survive container restarts
