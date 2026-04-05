@@ -45,8 +45,38 @@ dependencies {
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
+springBoot {
+	mainClass.set("com.iot.IotApplication")
+}
+
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+// Load monorepo root .env into bootRun so SPRING_PORT / POSTGRES_* match `docker compose` and `.env.example`
+tasks.bootRun {
+	val envFile = rootProject.projectDir.resolve("../../../.env").normalize()
+	if (envFile.isFile) {
+		envFile.readLines().forEach { raw ->
+			val line = raw.trim()
+			if (line.isEmpty() || line.startsWith("#")) {
+				return@forEach
+			}
+			val eq = line.indexOf('=')
+			if (eq <= 0) {
+				return@forEach
+			}
+			val key = line.substring(0, eq).trim()
+			if (!key.matches(Regex("[A-Za-z_][A-Za-z0-9_]*"))) {
+				return@forEach
+			}
+			var value = line.substring(eq + 1).trim()
+			if (value.length >= 2 && ((value.startsWith("\"") && value.endsWith("\"")) || (value.startsWith("'") && value.endsWith("'")))) {
+				value = value.substring(1, value.length - 1)
+			}
+			environment(key, value)
+		}
+	}
 }
 
 tasks.test {

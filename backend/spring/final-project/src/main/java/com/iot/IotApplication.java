@@ -1,13 +1,12 @@
-package com.software.engineering.final_project;
+package com.iot;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class FinalProjectApplication {
+public class IotApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(FinalProjectApplication.class, args);
+		SpringApplication.run(IotApplication.class, args);
 	}
-
 }

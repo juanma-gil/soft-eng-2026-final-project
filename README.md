@@ -126,6 +126,8 @@ cd backend/spring/final-project
 ./gradlew bootRun
 ```
 
+Requires **JDK 21** and the **repository root** `.env` (same `POSTGRES_*` / `SPRING_PORT` as in `.env.example`). PostgreSQL should be up (e.g. `docker compose` in `docker/`). Swagger UI: http://localhost:8080/swagger-ui.html
+
 **NestJS:**
 ```bash
 cd backend/nestjs
