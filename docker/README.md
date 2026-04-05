@@ -1,6 +1,6 @@
 # Docker Setup Guide
 
-This guide will help you set up and run the PostgreSQL database for the Software Engineering Final Project.
+This guide will help you set up and run the PostgreSQL database for the Software Engineering Final Project, and optionally build a production Docker image for the Next.js dashboard.
 
 ## Prerequisites
 
@@ -45,8 +45,6 @@ The `.env` file contains configuration for:
 ```bash
 cd docker
 ```
-
-### 3. Start the PostgreSQL Database
 
 ### 3. Start the PostgreSQL Database
 
@@ -302,6 +300,48 @@ TypeOrmModule.forRoot({
   database: 'soft_eng_db',
 })
 ```
+
+## Next.js dashboard (optional Docker image)
+
+You can build and run the IoT dashboard as a production container using `docker/nextjs.Dockerfile`. The image uses Next.js [standalone output](https://nextjs.org/docs/app/api-reference/config/next-config-js/output), which bundles a minimal Node server (`server.js`) suitable for deployment.
+
+### Prerequisites
+
+- Same Docker installation as above.
+- The dashboard source lives in `frontend/dashboard` (see the project OpenSpec / course docs).
+
+### Important: `NEXT_PUBLIC_API_URL`
+
+The frontend reads the backend base URL from `NEXT_PUBLIC_API_URL`. Next.js **inlines** this value at **build** time, so you must pass it as a **build argument** when building the image—changing it at `docker run` alone will not update what the browser uses.
+
+Use a URL that the **user’s browser** can reach (for example `http://localhost:3000` if the API is published on the host). It is usually **not** the internal Docker service name unless you also expose the API under that name on the host.
+
+### Build the image
+
+From the **repository root** (not inside `docker/`):
+
+```bash
+docker build -f docker/nextjs.Dockerfile \
+  --build-arg NEXT_PUBLIC_API_URL=http://localhost:3000 \
+  -t soft-eng-dashboard:latest \
+  .
+```
+
+Adjust `NEXT_PUBLIC_API_URL` to match where your backend listens (NestJS often uses port `3000`; choose another port if something else already uses it).
+
+### Run the container
+
+```bash
+docker run --rm -p 3001:3000 soft-eng-dashboard:latest
+```
+
+Then open **http://localhost:3001** in a browser. The app listens on port `3000` inside the container; the example maps host `3001` → container `3000` so you can run another service on host port `3000` at the same time.
+
+### Notes for coursework
+
+- Rebuild the image after changing `NEXT_PUBLIC_API_URL` or other public env vars.
+- A root `.dockerignore` excludes `node_modules`, `.next`, and common build artifacts so the build context stays smaller and faster.
+- The Dockerfile targets **Node 22** (aligned with `frontend/dashboard/.nvmrc`). Use `--build-arg NODE_VERSION=20` if you need another supported major.
 
 ## Need Help?
 

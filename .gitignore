@@ -93,3 +93,6 @@ docker/volumes/
 *.sublime-project
 *.sublime-workspace
 .fleet/
+.cursor
+
+openspec/
